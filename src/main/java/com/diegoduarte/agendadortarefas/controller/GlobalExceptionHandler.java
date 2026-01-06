@@ -1,6 +1,7 @@
 package com.diegoduarte.agendadortarefas.controller;
 
 import com.diegoduarte.agendadortarefas.infrastructure.exceptions.ResourceNotFoundException;
+import com.diegoduarte.agendadortarefas.infrastructure.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,6 +14,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleResourceNotFoundException (ResourceNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<String> handleUnauthorizedException (UnauthorizedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
 
 
 }
