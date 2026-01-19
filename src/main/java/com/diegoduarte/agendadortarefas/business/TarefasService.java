@@ -23,19 +23,20 @@ public class TarefasService {
     private final JwtUtil jwtUtil;
     private final TarefaUpdateConverter tarefaUpdateConverter;
 
-    public TarefasDTO gravarTarefa (String token, TarefasDTO tarefasDTO) {
+    public TarefasDTO gravarTarefa (String token, TarefasDTO TarefasDTO) {
         String email = jwtUtil.extractUsername(token.substring(7));
-        tarefasDTO.setDataCriacao(LocalDateTime.now());
-        tarefasDTO.setStatusNotificacaoEnum(StatusNotificacaoEnum.PENDENTE);
-        tarefasDTO.setEmailUsuario(email);
-        Tarefas tarefa = tarefaConverter.paraTarefaEntity(tarefasDTO);
+        TarefasDTO.setDataCriacao(LocalDateTime.now());
+        TarefasDTO.setStatusNotificacaoEnum(StatusNotificacaoEnum.PENDENTE);
+        TarefasDTO.setEmailUsuario(email);
+        Tarefas tarefa = tarefaConverter.paraTarefaEntity(TarefasDTO);
         return tarefaConverter.paraTarefasDTO(
                 tarefasRepository.save(tarefa));
     }
 
     public List<TarefasDTO> buscaListaDeTarefasPorPeriodo(LocalDateTime dataInicial, LocalDateTime dataFinal) {
         return tarefaConverter.paraListTarefaDTO(
-                tarefasRepository.findByDataEventoBetween(dataInicial, dataFinal));
+                tarefasRepository.findByDataEventoBetweenAndStatusNotificacaoEnum(dataInicial, dataFinal,
+                        StatusNotificacaoEnum.PENDENTE));
     }
 
     public List<TarefasDTO> buscaTarefasPorEmail (String token){
@@ -64,11 +65,11 @@ public class TarefasService {
         }
     }
 
-    public TarefasDTO updateTarefas (TarefasDTO tarefasDTO, String id) {
+    public TarefasDTO updateTarefas (TarefasDTO TarefasDTO, String id) {
         try {
             Tarefas tarefas = tarefasRepository.findById(id).orElseThrow(() ->
                     new ResourceNotFoundException("Tarefa não encontrada"));
-            tarefaUpdateConverter.updateTarefas(tarefasDTO, tarefas);
+            tarefaUpdateConverter.updateTarefas(TarefasDTO, tarefas);
             return tarefaConverter.paraTarefasDTO(tarefasRepository.save(tarefas));
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException("Erro ao alterar tarefa", e.getCause());
